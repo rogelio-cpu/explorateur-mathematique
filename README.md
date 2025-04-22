@@ -19,5 +19,5 @@ Application web interactive permettant d'explorer les propriétés mathématique
 - Qualité : Elie Mpo
 
 ## 🚀 Déploiement
-(à définir, ex : Vercel + Railway)
+à définir
 
