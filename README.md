@@ -1,6 +1,8 @@
 # Explorateur Numérique Mathématique
 
-Application web interactive permettant d'explorer les propriétés mathématiques d’un nombre.
+**Application web interactive** permettant aux utilisateurs d’explorer les propriétés mathématiques d’un nombre donné. Lorsqu’un nombre est saisi, l'application retourne ses caractéristiques : parité, primalité, représentation binaire, factorisation, racine carrée, etc.
+
+Ce projet adopte une approche **graphique et intuitive**, inspirée du modèle Visual Mind, via une **représentation arborescente ou en bulles** des propriétés.
 
 ## 🔧 Technologies
 - **Frontend** : React.js, Tailwind CSS, MathJax
@@ -11,36 +13,30 @@ Application web interactive permettant d'explorer les propriétés mathématique
 - `frontend/` : Application React
 - `backend/` : API Django
 - `docs/` : Documentation et livrables
+  
+![image](https://github.com/user-attachments/assets/5738cf13-1881-4529-bfde-09b74938c31b)
 
-explorateur-mathematique/
-│
-├── backend/                     # Projet Django
-│   ├── enm/                    # Paramètres du projet Django
-│   ├── api/                    # Application contenant l'API REST
-│   ├── manage.py
-│   └── requirements.txt        # Dépendances Python (Django, DRF, etc.)
-│
-├── frontend/                    # Application React
-│   ├── public/
-│   ├── src/
-│   │   ├── components/         # Composants visuels réutilisables
-│   │   ├── pages/              # Pages principales
-│   │   └── App.js              # Composant racine
-│   └── package.json            # Dépendances JS (React, Tailwind, etc.)
-│
-├── docs/                       # Documentation technique et livrables
-│   ├── rapport.pdf
-│   └── modules_math.pdf
-│
-├── .gitignore                  # Fichiers à ignorer par Git
-├── README.md                   # Présentation du projet
-└── LICENSE                     # (optionnel)
+## 👥 Répartition des équipes
 
-## 👥 Équipe
-- Backend : David Debuze (Team Leader), Roger Epando, Dan Beze
-- Frontend : Elie Ntwari, Joel Stone Lumpungu, Eclat-Gabriella Delomin
-- Logique Mathématique : Derick Mulambo, Daniel Lukali, Joel Mukendi, Marie Ngoy
-- Qualité : Elie Mpo
+### 🔹 Backend (Django + API REST)
+- David Debuze (Team Leader)
+- Roger Epando
+- Dan Beze
+
+### 🔸 Frontend (UI avec React)
+- Elie Ntwari (Team Leader)
+- Joel Stone Lumpungu
+- Eclat-Gabriella Delomin
+
+### 🧮 Logique & Mathématiques
+- Derick Mulambo (Team Leader)
+- Daniel Lukali
+- Joel Mukendi
+- Marie Ngoy
+
+### ✅ Intégration & Qualité
+- Elie Mpo
+
 
 ## 🚀 Déploiement
 à définir
