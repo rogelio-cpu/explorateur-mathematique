@@ -12,30 +12,29 @@ Application web interactive permettant d'explorer les propriétés mathématique
 - `backend/` : API Django
 - `docs/` : Documentation et livrables
 
-  explorateur-mathematique/
+explorateur-mathematique/
 │
-├── backend/                    # Projet Django
-│   ├── enm/                    # Dossier du projet Django (settings.py, etc.)
-│   ├── api/                    # Application Django pour l'API REST
+├── backend/                     # Projet Django
+│   ├── enm/                    # Paramètres du projet Django
+│   ├── api/                    # Application contenant l'API REST
 │   ├── manage.py
-│   └── requirements.txt        # Dépendances backend
+│   └── requirements.txt        # Dépendances Python (Django, DRF, etc.)
 │
-├── frontend/                   # Application React.js
+├── frontend/                    # Application React
 │   ├── public/
 │   ├── src/
-│   │   ├── components/         # Composants réutilisables
+│   │   ├── components/         # Composants visuels réutilisables
 │   │   ├── pages/              # Pages principales
-│   │   └── App.js
-│   └── package.json            # Dépendances frontend
+│   │   └── App.js              # Composant racine
+│   └── package.json            # Dépendances JS (React, Tailwind, etc.)
 │
-├── docs/                       # Documentation technique, rapport, etc.
+├── docs/                       # Documentation technique et livrables
 │   ├── rapport.pdf
 │   └── modules_math.pdf
 │
-├── .gitignore                  # Fichiers à ignorer (node_modules, __pycache__, etc.)
-├── README.md                   # Présentation générale
+├── .gitignore                  # Fichiers à ignorer par Git
+├── README.md                   # Présentation du projet
 └── LICENSE                     # (optionnel)
-
 
 ## 👥 Équipe
 - Backend : David Debuze (Team Leader), Roger Epando, Dan Beze
