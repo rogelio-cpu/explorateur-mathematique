@@ -41,3 +41,7 @@ Ce projet adopte une approche **graphique et intuitive**, inspirée du modèle V
 ## 🚀 Déploiement
 à définir
 
+_____________________________________
+5/5 de JAIRO
+
+
