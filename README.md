@@ -6,7 +6,7 @@ Ce projet adopte une approche **graphique et intuitive**, inspirée du modèle V
 
 ## 🔧 Technologies
 - **Frontend** : React.js, Tailwind CSS, MathJax
-- **Backend** : Django, Django REST Framework, MySQL
+- **Backend** : Django, Django REST Framework,SQLite
 - **Outils** : Postman, GitHub, VS Code
 
 ## 📂 Structure du projet
@@ -37,11 +37,8 @@ Ce projet adopte une approche **graphique et intuitive**, inspirée du modèle V
 ### ✅ Intégration & Qualité
 - Elie Mpo
 
+## chef de projet
+- Jelly Maweja
 
 ## 🚀 Déploiement
 à définir
-
-_____________________________________
-5/5 de JAIRO
-
-
