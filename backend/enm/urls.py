@@ -16,8 +16,17 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+# from rest_framework.documentation import include_docs_urls
+from django.views.generic import RedirectView
 
 urlpatterns = [
+    # Redirection de la page d'accueil vers l'API
+    path("", RedirectView.as_view(url="/api/proprietes-mathematiques/?nombre=42")),
+    
     path("admin/", admin.site.urls),
+    # Inclusion des URLs de l'API
+    path("api/", include('api.urls')),
+    # Documentation API - Désactivée temporairement
+    # path("docs/", include_docs_urls(title="API Explorateur Mathématique")),
 ]
