@@ -10,25 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
 from pathlib import Path
 
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0xv#i&%@tg39cxi6b=nxh3tm-nw-2@)%5e-sh)h^+4o$an%+cn"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
