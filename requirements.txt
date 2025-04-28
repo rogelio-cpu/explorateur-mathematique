@@ -1,0 +1,14 @@
+# Django
+Django>=4.2,<5.0
+
+# Gunicorn : serveur d'application WSGI pour la production
+gunicorn
+
+# Django REST Framework : pour créer ton API
+djangorestframework
+
+# Whitenoise : pour servir les fichiers statiques
+whitenoise
+
+# (optionnel) python-dotenv : si tu veux charger un .env en local
+python-dotenv
