@@ -25,7 +25,8 @@ SECRET_KEY = "django-insecure-0xv#i&%@tg39cxi6b=nxh3tm-nw-2@)%5e-sh)h^+4o$an%+cn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['explorateur-mathematique.onrender.com']
+
 
 
 # Application definition
