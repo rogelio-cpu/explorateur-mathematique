@@ -13,10 +13,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from decouple import config  # si tu utilises decouple
 from pathlib import Path
+from decouple import Config, RepositoryEnv
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+env_file = BASE_DIR / ".env"
+config = Config(repository=RepositoryEnv(env_file))
 
 SECRET_KEY = config("DJANGO_SECRET_KEY", default="dev-secret-key")
 
