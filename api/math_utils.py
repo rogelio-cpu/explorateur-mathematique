@@ -25,7 +25,7 @@ def calculer_proprietes_avec_descriptions(nombre):
         })
         
         resultat["proprietes"].append({
-            "nom": prop.replace("_", " "),
+            "nom": prop.replace("_", " ").capitalize(),
             "valeur": valeur,
             "description": description["description"],
             "methode_calcul": description.get("methode", ""),
