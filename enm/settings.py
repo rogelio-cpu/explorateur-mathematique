@@ -10,23 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
+from decouple import config  # si tu utilises decouple
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0xv#i&%@tg39cxi6b=nxh3tm-nw-2@)%5e-sh)h^+4o$an%+cn"
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="dev-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ['explorateur-mathematique.onrender.com']
-
+ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="localhost", cast=lambda v: [s.strip() for s in v.split(",")])
 
 
 # Application definition

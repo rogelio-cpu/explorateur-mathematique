@@ -12,3 +12,5 @@ whitenoise
 
 # (optionnel) python-dotenv : si tu veux charger un .env en local
 python-dotenv
+
+python-decouple
