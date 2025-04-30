@@ -9,24 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from pathlib import Path
+from decouple import config
 
-import os
-from decouple import config  # si tu utilises decouple
-from pathlib import Path
-from decouple import Config, RepositoryEnv
-from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-env_file = BASE_DIR / ".env"
-config = Config(repository=RepositoryEnv(env_file))
+SECRET_KEY = config("SECRET_KEY")
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-SECRET_KEY = config("DJANGO_SECRET_KEY", default="dev-secret-key")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
-
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="localhost", cast=lambda v: [s.strip() for s in v.split(",")])
+ALLOWED_HOSTS = ["explorateur-mathematique.onrender.com"]
 
 
 # Application definition
