@@ -12,6 +12,7 @@ class ProprietesMathematiquesView(APIView):
     Vue API pour calculer les propriétés mathématiques d'un nombre.
     Version avec gestion du champ 'statut' dans la réponse.
     """
+    print('Hello world')
     def get(self, request, format=None):
         nombre_param = request.query_params.get('nombre', None)
         if nombre_param is None:

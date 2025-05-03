@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 env/
 venv/
-
+.env
 # Node
 node_modules/
 build/
@@ -12,5 +12,5 @@ build/
 .DS_Store
 
 # IDE
-.vscode/
+.vscode/git
 .idea/
