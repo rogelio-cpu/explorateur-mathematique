@@ -127,8 +127,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://explo-math-front.vercel.app/",
+    "https://explo-math-front.vercel.app/"
 ]
+ALLOWED_HOSTS = ["explorateur-mathematique.onrender.com"]
 
 # Autoriser les cookies et les en-têtes d'authentification si nécessaire
 CORS_ALLOW_CREDENTIALS = True
