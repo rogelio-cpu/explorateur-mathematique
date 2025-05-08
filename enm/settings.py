@@ -15,11 +15,11 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-SECRET_KEY = "django-insecure-^&a&($!qw(@$1q0-()zx%f%xyfz=b@k%1&28s0(vy03d$d0r12"
+SECRET_KEY = SECRET_KEY
 
-DEBUG = True
+DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["explorateur-mathematique.onrender.com"]
 
 # Application definition
 
