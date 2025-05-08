@@ -121,7 +121,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = [
-    "https://explo-math-front.vercel.app/"
+    "https://explo-math-front.vercel.app"
 ]
 
 # Autoriser les cookies et les en-têtes d'authentification si nécessaire
