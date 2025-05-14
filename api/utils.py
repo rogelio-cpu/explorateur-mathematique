@@ -93,6 +93,9 @@ def est_fraction_rationnelle(nombre):
 def est_nombre_rationnel(nombre):
     """Vérifie si le nombre peut s'écrire comme une fraction d'entiers."""
     try:
+        # Pi, e et autres irrationnels connus NE sont PAS rationnels
+        if est_irrationnel_connu(str(nombre)):
+            return False
         float(nombre)
         return True
     except ValueError:
@@ -100,15 +103,50 @@ def est_nombre_rationnel(nombre):
             nombre_str = str(nombre)
             if '/' in nombre_str:
                 numerateur, denominateur = nombre_str.split('/')
-                return est_entier_naturel(numerateur) or est_entier_naturel_negatif(numerateur) and est_entier_naturel(denominateur)
+                return est_entier_naturel(numerateur) or (est_entier_naturel_negatif(numerateur) and est_entier_naturel(denominateur))
             return False
         except:
             return False
 
 def est_irrationnel_connu(nombre):
-    """Vérifie si le nombre est un irrationnel célèbre."""
-    irrationnels_connus = ['pi', 'e', 'sqrt(2)', 'sqrt(3)', 'sqrt(5)', 'phi']
-    return nombre.lower() in irrationnels_connus
+    """Vérifie si le nombre est un irrationnel célèbre (pi, e, sqrt(2), sqrt(3), sqrt(5), phi, etc.) ou une racine carrée non parfaite."""
+    irrationnels = {
+        'pi': [str(math.pi), '3.141592653589793'],
+        'e': [str(math.e), '2.718281828459045'],
+        'phi': ['1.618033988749895']
+    }
+    n = str(nombre).lower().replace(' ', '')
+    # Cas sqrt(n) numérique : détecter si c'est une racine non parfaite
+    try:
+        if n.startswith('sqrt(') and n.endswith(')'):
+            arg = n[5:-1]
+            if arg.isdigit():
+                val = int(arg)
+                racine = math.sqrt(val)
+                if racine.is_integer():
+                    return False  # racine parfaite, donc rationnel
+                else:
+                    return True   # racine non parfaite, donc irrationnel
+    except:
+        pass
+    # Cas valeur décimale d'une racine non parfaite
+    try:
+        val = float(n)
+        # On teste si c'est la racine d'un carré parfait (ex: sqrt(4)=2)
+        carre = val * val
+        if abs(round(carre) - carre) < 1e-10 and round(carre) in [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]:
+            return False  # c'est un rationnel
+        # On teste si c'est la valeur d'une racine non parfaite connue
+        for k in range(2, 101):
+            if abs(val - math.sqrt(k)) < 1e-10 and not math.sqrt(k).is_integer():
+                return True
+    except:
+        pass
+    # Cas pi, e, phi, etc.
+    for key, vals in irrationnels.items():
+        if n == key or n in vals:
+            return True
+    return False
 
 def est_reel(nombre):
     """Vérifie si le nombre est un réel valide."""
@@ -197,21 +235,51 @@ def nettoyer_expression(expression):
     
     # Ajouter des espaces autour des opérateurs explicites
     for op in ['+', '-', '*', '/']:
-        expression = expression.replace(op, f' {op} ')
+        # On ne met pas d'espace devant une parenthèse ouvrante ou après une parenthèse fermante
+        expression = re.sub(rf'(?<![a-zA-Z0-9)])\{op}', f' {op}', expression)
+        expression = re.sub(rf'\{op}(?![a-zA-Z0-9(])', f'{op} ', expression)
     
     # Gérer la multiplication implicite (ex: 2x, sin(x)cos(x))
     # Ajouter * entre un nombre et une fonction ou entre deux fonctions
     expression = re.sub(r'(\d)([a-z])', r'\1 * \2', expression)  # 2x -> 2 * x
     expression = re.sub(r'\)([a-z])', r') * \1', expression)      # sin(x)cos(x) -> sin(x) * cos(x)
     
+    # NE PAS ajouter d'espace entre un mot et une parenthèse ouvrante (sin(90) doit rester sin(90))
+    expression = re.sub(r'([a-zA-Z])\s+\(', r'\1(', expression)
+    
     # Nettoyer les espaces multiples
     expression = ' '.join(expression.split())
+    return expression
+
+def filtrer_expression_non_math(expression):
+    """
+    Supprime tout mot ou caractère qui n'est pas un mot-clé mathématique autorisé
+    (log, sin, cos, pi, ln, tan, base, +, -, *, /, ^, (, ), ., chiffres).
+    Les mots non autorisés sont retirés de l'expression.
+    """
+    # Liste des mots autorisés
+    mots_autorises = [
+        'log', 'sin', 'cos', 'pi', 'ln', 'tan', 'base'
+    ]
+    # On protège les mots autorisés par des balises temporaires
+    for mot in mots_autorises:
+        expression = re.sub(rf'\\b{mot}\\b', f'__{mot}__', expression, flags=re.IGNORECASE)
+    # On retire tout ce qui n'est pas opérateur ou balise temporaire (on NE filtre plus les chiffres ni les nombres)
+    expression = re.sub(r'[^a-zA-Z0-9+\-*/^()._]', ' ', expression)
+    # On remet les mots autorisés
+    for mot in mots_autorises:
+        expression = expression.replace(f'__{mot}__', mot)
+    # Nettoyer les espaces multiples
+    expression = ' ' .join(expression.split())
     return expression
 
 def detecter_expression(expression):
     """Détecte le type d'expression mathématique"""
     expression = expression.lower().strip()
     expression = nettoyer_expression(expression)
+    # Si l'expression est vide après nettoyage, on retourne une erreur explicite
+    if not expression:
+        raise ValueError("Aucune expression mathématique valide détectée dans l'entrée.")
     
     # Vérifier d'abord les opérations de priorité basse (+, -)
     for op in ['+', '-']:
@@ -360,9 +428,14 @@ def calculer_expression(expression):
         elif expr_info['type'] == 'fraction':
             num = float(calculer_expression(expr_info['numerateur']))
             den = float(calculer_expression(expr_info['denominateur']))
-            return nettoyer_resultat(num / den)
+            resultat = num / den
+            # On retourne toujours un entier si la partie décimale est nulle (ex: 30/6 -> 5)
+            if resultat.is_integer():
+                return str(int(resultat))
+            else:
+                return str(resultat).rstrip('0').rstrip('.') if '.' in str(resultat) else str(resultat)
         
         # Si c'est un nombre simple, le nettoyer aussi
         return nettoyer_resultat(expression)
     except Exception as e:
-        raise ValueError(f"Erreur dans le calcul de l'expression: {str(e)}") 
+        raise ValueError(f"Erreur dans le calcul de l'expression: {str(e)}")
