@@ -110,11 +110,46 @@ def est_nombre_rationnel(nombre):
 
 def est_irrationnel_connu(nombre):
     """Vérifie si le nombre est un irrationnel célèbre (pi, e, sqrt(2), sqrt(3), sqrt(5), phi, etc.) ou une racine carrée non parfaite."""
+
     irrationnels = {
-        'pi': [str(math.pi), '3.141592653589793'],
-        'e': [str(math.e), '2.718281828459045'],
-        'phi': ['1.618033988749895']
-    }
+    # Constantes mathématiques fondamentales
+    'pi': [str(math.pi), '3.141592653589793'],
+    'e': [str(math.e), '2.718281828459045'],
+    'phi': ['1.618033988749895', '(1+sqrt(5))/2'],
+
+    # Racines carrées non parfaites (souvent utilisées)
+    'sqrt2': [str(math.sqrt(2)), '1.4142135623730951'],
+    'sqrt3': [str(math.sqrt(3)), '1.7320508075688772'],
+    'sqrt5': [str(math.sqrt(5)), '2.23606797749979'],
+    'sqrt6': [str(math.sqrt(6)), '2.449489742783178'],
+    'sqrt7': [str(math.sqrt(7)), '2.6457513110645906'],
+    'sqrt8': [str(math.sqrt(8)), '2.8284271247461903'],
+    'sqrt10': [str(math.sqrt(10)), '3.1622776601683795'],
+
+    # Variantes de pi
+    'pi/2': [str(math.pi / 2), '1.5707963267948966'],
+    'pi/3': [str(math.pi / 3), '1.0471975511965976'],
+    'pi/4': [str(math.pi / 4), '0.7853981633974483'],
+    '2pi': [str(2 * math.pi), '6.283185307179586'],
+    'ln(pi)': [str(math.log(math.pi)), '1.1447298858494002'],
+
+    # Logarithmes naturels connus (ln)
+    'ln2': [str(math.log(2)), '0.6931471805599453'],
+    'ln3': [str(math.log(3)), '1.0986122886681098'],
+    'ln10': [str(math.log(10)), '2.302585092994046'],
+
+    # Exponentielles
+    'e^pi': [str(math.exp(math.pi)), '23.140692632779267'],
+    'e^1': [str(math.exp(1)), '2.718281828459045'],
+    '2^sqrt2': [str(2 ** math.sqrt(2)), '2.665144142690225'],
+
+    # Autres constantes mathématiques connues
+    'gamma': ['0.577215664901532', 'Euler–Mascheroni'],
+    'zeta(3)': ['1.202056903159594'],  # constante d'Apéry, démontrée irrationnelle
+    'sqrt(π)': [str(math.sqrt(math.pi)), '1.77245385091'],
+    'catalan': ['0.915965594177219']  # conjecturée irrationnelle
+}
+
     n = str(nombre).lower().replace(' ', '')
     # Cas sqrt(n) numérique : détecter si c'est une racine non parfaite
     try:
