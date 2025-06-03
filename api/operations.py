@@ -107,48 +107,48 @@ def analyser_nombre(nombre):
     # 7. Fraction rationnelle
     result['fraction_rationnelle']['appartient'] = est_fraction_rationnelle(nombre)
     if result['fraction_rationnelle']['appartient']:
-        result['fraction_rationnelle']['explication'] = f"{nombre} ∈ F : C'est une fraction rationnelle."
+        result['fraction_rationnelle']['explication'] = f"{nombre} ∈ F : C'est une fraction non décimale avec dénominateur ≠ 10ⁿ."
     else:
-        result['fraction_rationnelle']['explication'] = f"{nombre} ∉ F"
-
-    # 8. Nombre rationnel
-    # Correction : un nombre irrationnel connu NE doit PAS être considéré comme rationnel
-    if est_irrationnel_connu(str(nombre)):
-        result['nombre_rationnel']['appartient'] = False
-        result['nombre_rationnel']['explication'] = f"{nombre} ∉ ℚ : C'est un nombre irrationnel célèbre."
-    else:
-        result['nombre_rationnel']['appartient'] = est_nombre_rationnel(nombre)
-        if result['nombre_rationnel']['appartient']:
-            result['nombre_rationnel']['explication'] = f"{nombre} ∈ ℚ : Peut s'écrire comme une fraction d'entiers."
+        explication = f"{nombre} ∉ F"
+        if '/' not in nombre:
+            explication += "\n↪ N'est pas une fraction"
         else:
-            result['nombre_rationnel']['explication'] = f"{nombre} ∉ ℚ : Ne peut pas s'écrire comme une fraction d'entiers."
-
-    # 9. Irrationnel connu
-    result['irrationnel_connu']['appartient'] = est_irrationnel_connu(str(nombre))
-    if result['irrationnel_connu']['appartient']:
-        result['irrationnel_connu']['explication'] = f"{nombre} ∈ irℚ : C'est un nombre irrationnel célèbre."
+            explication += "\n↪ Le dénominateur est une puissance de 10 (forme décimale déguisée)"
+        result['fraction_rationnelle']['explication'] = explication
+    
+    # 8. Nombre rationnel
+    result['nombre_rationnel']['appartient'] = est_nombre_rationnel(nombre)
+    if result['nombre_rationnel']['appartient']:
+        result['nombre_rationnel']['explication'] = f"{nombre} ∈ ℚ : Il peut s'écrire comme un rapport de deux entiers."
     else:
-        result['irrationnel_connu']['explication'] = f"{nombre} ∉ irℚ"
-
+        result['nombre_rationnel']['explication'] = f"{nombre} ∉ ℚ\n↪ Ce nombre ne peut pas être exprimé comme une fraction exacte de deux entiers"
+    
+    # 9. Irrationnel connu
+    result['irrationnel_connu']['appartient'] = est_irrationnel_connu(nombre)
+    if result['irrationnel_connu']['appartient']:
+        result['irrationnel_connu']['explication'] = f"{nombre} est un irrationnel célèbre."
+    else:
+        result['irrationnel_connu']['explication'] = f"{nombre} n'est pas un irrationnel célèbre connu\n↪ Vous pouvez essayer 'pi', 'e', 'sqrt(2)'..."
+    
     # 10. Réel
     result['reel']['appartient'] = est_reel(nombre)
     if result['reel']['appartient']:
-        result['reel']['explication'] = f"{nombre} ∈ ℝ : C'est un nombre réel."
+        result['reel']['explication'] = f"{nombre} ∈ ℝ\n↪ Le nombre est un entier ou un décimal valide."
     else:
-        result['reel']['explication'] = f"{nombre} ∉ ℝ"
-
+        result['reel']['explication'] = f"{nombre} ∉ ℝ\n↪ Le nombre ne correspond pas à une représentation réelle standard"
+    
     # 11. Imaginaire pur
     result['imaginaire_pur']['appartient'] = est_imaginaire_pur(nombre)
     if result['imaginaire_pur']['appartient']:
-        result['imaginaire_pur']['explication'] = f"{nombre} ∈ iℝ : C'est un imaginaire pur."
+        result['imaginaire_pur']['explication'] = f"{nombre} ∈ iℝ\n↪ Le nombre est bien de la forme 'bi' avec b réel."
     else:
-        result['imaginaire_pur']['explication'] = f"{nombre} ∉ iℝ"
-
+        result['imaginaire_pur']['explication'] = f"{nombre} ∉ iℝ\n↪ Le nombre n'est pas un imaginaire pur (ex: '3i', '-1.5i')"
+    
     # 12. Complexe
     result['complexe']['appartient'] = est_complexe(nombre)
     if result['complexe']['appartient']:
-        result['complexe']['explication'] = f"{nombre} ∈ ℂ : C'est un nombre complexe."
+        result['complexe']['explication'] = f"{nombre} ∈ ℂ\n↪ Le nombre est bien un complexe (a + bi, ou ℝ ou iℝ)."
     else:
-        result['complexe']['explication'] = f"{nombre} ∉ ℂ"
-
+        result['complexe']['explication'] = f"{nombre} ∉ ℂ\n↪ Le nombre n'est pas un complexe valide"
+    
     return result

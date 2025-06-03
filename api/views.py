@@ -22,50 +22,23 @@ def analyse_nombre_api(request):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    from .utils import filtrer_expression_non_math
-    expression = filtrer_expression_non_math(expression)
-    
     try:
-        # Si l'expression est une fraction simple (ex: 3/4)
+        # Ne pas calculer si l'expression contient une division sous forme de fraction
         if '/' in expression and all(part.strip().isdigit() for part in expression.split('/', 1)):
+            # Cas de fraction comme "3/4" → ne pas calculer
             valeur_calculee = expression
-            analyse_fraction = analyser_nombre(expression)
-            # On calcule la valeur numérique de la fraction
-            num, den = expression.split('/', 1)
-            try:
-                resultat = float(num) / float(den)
-                if resultat.is_integer():
-                    valeur_num = str(int(resultat))
-                else:
-                    valeur_num = str(resultat).rstrip('0').rstrip('.') if '.' in str(resultat) else str(resultat)
-                analyse_numerique = analyser_nombre(valeur_num)
-            except Exception as e:
-                valeur_num = None
-                analyse_numerique = {'error': f'Erreur lors du calcul de la fraction: {str(e)}'}
-            return Response({
-                'niveau_1': {
-                    'expression_fraction': expression,
-                    'analyse': analyse_fraction
-                },
-                'niveau_2': {
-                    'valeur_numerique': valeur_num,
-                    'analyse': analyse_numerique
-                }
-            })
         else:
-            # Correction : si l'expression est entre parenthèses, on les retire pour l'analyse et le calcul
-            expr = expression
-            if expr.startswith('(') and expr.endswith(')'):
-                expr = expr[1:-1].strip()
-            # Toujours calculer l'expression complète (sin, cos, tan, etc. inclus)
-            valeur_calculee = calculer_expression(expr)
-            # Correction : pour l'analyse, il faut toujours passer la valeur calculée sous forme de string
-            analyse = analyser_nombre(str(valeur_calculee))
-            return Response({
-                'expression_originale': expression,
-                'valeur_calculee': valeur_calculee,
-                'analyse': analyse
-            })
+            # Sinon, calcul normal
+            valeur_calculee = calculer_expression(expression)
+        
+        # Analyser l'expression d'origine (pas la valeur calculée)
+        analyse = analyser_nombre(expression)
+        
+        return Response({
+            'expression_originale': expression,
+            'valeur_calculee': valeur_calculee,
+            'analyse': analyse
+        })
     except Exception as e:
         return Response(
             {'error': str(e)},
