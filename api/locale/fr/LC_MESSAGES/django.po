@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: explorateur-mathematique\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-16 12:00+0000\n"
+"PO-Revision-Date: 2025-08-16 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "number_parameter_required"
+msgstr "Paramètre \"nombre\" requis"
+
+msgid "calculation_error"
+msgstr "Erreur de calcul: {}"
+
+msgid "original_expression"
+msgstr "expression_originale"
+
+msgid "calculated_value"
+msgstr "valeur_calculee"
+
+msgid "analysis"
+msgstr "analyse"

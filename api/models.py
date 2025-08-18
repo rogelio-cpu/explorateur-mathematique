@@ -5,14 +5,12 @@ from django.db import models
 class Nombre(models.Model):
     ENSEMBLE_CHOICES = [
         ('chiffre_arabe', 'Chiffre Arabe'),
-        ('nombre_arabe', 'Nombre Arabe'),
         ('entier_naturel', 'Entier Naturel'),
-        ('entier_naturel_negatif', 'Entier Naturel Négatif'),
+        ('entier_negatif', 'Entier Négatif'),
         ('entier_relatif', 'Entier Relatif'),
-        ('decimal_fini', 'Décimal Fini'),
-        ('fraction_rationnelle', 'Fraction Rationnelle'),
-        ('nombre_rationnel', 'Nombre Rationnel'),
-        ('irrationnel_connu', 'Irrationnel Connu'),
+        ('nombre_decimal', 'Nombre Décimal'),
+        ('rationnel', 'Rationnel'),
+        ('irrationnel', 'Irrationnel'),
         ('reel', 'Réel'),
         ('imaginaire_pur', 'Imaginaire Pur'),
         ('complexe', 'Complexe'),

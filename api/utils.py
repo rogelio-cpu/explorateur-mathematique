@@ -1,368 +1,278 @@
 import math
 import re
+from translations import DESCRIPTIONS, get_descriptions
 
-def est_chiffre_arabe(nombre):
-    """Vérifie si le nombre est un seul chiffre arabe (0-9)."""
-    try:
-        return len(str(nombre)) == 1 and str(nombre) in '0123456789'
-    except:
-        return False
 
-def est_nombre_arabe(nombre):
-    """Vérifie si le nombre est un nombre arabe valide (≥2 chiffres, ne commence pas par 0)."""
-    try:
-        nombre_str = str(nombre)
-        return len(nombre_str) >= 2 and nombre_str.isdigit() and nombre_str[0] != '0'
-    except:
-        return False
+# =============================
+#   Vérifications de nombres
+# =============================
 
-def est_entier_naturel(nombre):
-    """Vérifie si le nombre est un entier naturel (0 ou nombre arabe valide)."""
-    try:
-        nombre_str = str(nombre)
-        # Un chiffre arabe (0-9) est aussi un entier naturel
-        if est_chiffre_arabe(nombre_str):
-            return True
-        return nombre_str == '0' or est_nombre_arabe(nombre_str)
-    except:
-        return False
+def est_chiffre_arabe(nombre: str) -> bool:
+    """Vérifie si c'est un chiffre arabe unique (0-9)."""
+    return str(nombre) in "0123456789" and len(str(nombre)) == 1
 
-def est_entier_naturel_negatif(nombre):
-    """Vérifie si le nombre est un entier naturel négatif (-n où n est un nombre arabe valide)."""
-    try:
-        nombre_str = str(nombre)
-        if not nombre_str.startswith('-'):
-            return False
-        # La partie après le - doit être un entier naturel
-        return est_entier_naturel(nombre_str[1:])
-    except:
-        return False
 
-def est_entier_relatif(nombre):
-    """Vérifie si le nombre est un entier relatif (positif, nul ou négatif)."""
-    try:
-        nombre_str = str(nombre)
-        return est_entier_naturel(nombre_str) or est_entier_naturel_negatif(nombre_str)
-    except:
-        return False
+def est_nombre_arabe(nombre: str) -> bool:
+    """Vérifie si c'est un nombre arabe valide (≥ 2 chiffres, ne commence pas par 0)."""
+    nombre_str = str(nombre)
+    return nombre_str.isdigit() and len(nombre_str) >= 2 and not nombre_str.startswith("0")
 
-def est_decimal_fini(nombre):
-    """Vérifie si le nombre est un décimal fini valide."""
-    try:
-        nombre_str = str(nombre)
-        parts = nombre_str.split('.')
-        if len(parts) != 2:
-            return False
-        
-        partie_entiere, partie_decimale = parts
-        
-        # Vérifier la partie entière
-        if partie_entiere.startswith('-'):
-            valide_entiere = partie_entiere == '-' or est_entier_naturel(partie_entiere[1:])
-        else:
-            valide_entiere = est_entier_naturel(partie_entiere) or partie_entiere == ''
-        
-        # Vérifier la partie décimale
-        valide_decimale = partie_decimale.isdigit() and len(partie_decimale) > 0
-        
-        return valide_entiere and valide_decimale
-    except:
-        return False
 
-def est_fraction_rationnelle(nombre):
-    """Vérifie si le nombre est une fraction rationnelle (p/q avec q non puissance de 10)."""
-    try:
-        nombre_str = str(nombre)
-        if '/' not in nombre_str:
-            return False
-        
-        numerateur, denominateur = nombre_str.split('/')
-        
-        # Vérifier que le dénominateur n'est pas une puissance de 10
-        if denominateur.isdigit():
-            d = int(denominateur)
-            if d == 0:
-                return False
-            while d % 10 == 0:
-                d = d // 10
-            return d == 1
-        return False
-    except:
-        return False
+def est_entier_naturel(nombre: str) -> bool:
+    """Vérifie si c'est un entier naturel (0 ou nombre arabe valide)."""
+    nombre_str = str(nombre)
+    return (
+        nombre_str == "0"
+        or est_chiffre_arabe(nombre_str)
+        or est_nombre_arabe(nombre_str)
+    )
 
-def est_nombre_rationnel(nombre):
-    """Vérifie si le nombre peut s'écrire comme une fraction d'entiers."""
+
+def est_entier_naturel_negatif(nombre: str) -> bool:
+    """Vérifie si c'est un entier naturel négatif (-n où n est un entier naturel)."""
+    nombre_str = str(nombre)
+    return nombre_str.startswith("-") and est_entier_naturel(nombre_str[1:])
+
+
+def est_entier_relatif(nombre: str) -> bool:
+    """Vérifie si c'est un entier relatif."""
+    return est_entier_naturel(nombre) or est_entier_naturel_negatif(nombre)
+
+
+def est_decimal_fini(nombre: str) -> bool:
+    """Vérifie si c'est un décimal fini."""
+    if "." not in str(nombre):
+        return False
+    partie_entiere, partie_decimale = str(nombre).split(".", 1)
+
+    # Partie entière
+    if partie_entiere.startswith("-"):
+        valide_entiere = est_entier_naturel(partie_entiere[1:]) or partie_entiere == "-"
+    else:
+        valide_entiere = est_entier_naturel(partie_entiere) or partie_entiere == ""
+
+    # Partie décimale
+    return valide_entiere and partie_decimale.isdigit() and len(partie_decimale) > 0
+
+
+def est_fraction_rationnelle(nombre: str) -> bool:
+    """Vérifie si c'est une fraction rationnelle p/q avec q ≠ 0."""
+    if "/" not in str(nombre):
+        return False
+    num, den = str(nombre).split("/", 1)
+    return est_entier_relatif(num) and est_entier_relatif(den) and int(den) != 0
+
+
+def est_nombre_rationnel(nombre: str) -> bool:
+    """Vérifie si le nombre est rationnel."""
     try:
         float(nombre)
         return True
     except ValueError:
-        try:
-            nombre_str = str(nombre)
-            if '/' in nombre_str:
-                numerateur, denominateur = nombre_str.split('/')
-                return est_entier_naturel(numerateur) or est_entier_naturel_negatif(numerateur) and est_entier_naturel(denominateur)
-            return False
-        except:
-            return False
+        return est_fraction_rationnelle(nombre)
 
-def est_irrationnel_connu(nombre):
-    """Vérifie si le nombre est un irrationnel célèbre."""
-    irrationnels_connus = ['pi', 'e', 'sqrt(2)', 'sqrt(3)', 'sqrt(5)', 'phi']
-    return nombre.lower() in irrationnels_connus
 
-def est_reel(nombre):
-    """Vérifie si le nombre est un réel valide."""
+def est_irrationnel_connu(nombre: str) -> bool:
+    """Reconnaît quelques irrationnels célèbres."""
+    return str(nombre).lower() in ["pi", "e", "sqrt(2)", "sqrt(3)", "sqrt(5)", "phi"]
+
+
+def est_reel(nombre: str) -> bool:
+    """Vérifie si c'est un réel."""
     try:
         float(nombre)
         return True
     except ValueError:
         return est_irrationnel_connu(nombre)
 
-def est_imaginaire_pur(nombre):
-    """Vérifie si le nombre est un imaginaire pur (bi)."""
-    return nombre.endswith('i') and est_reel(nombre[:-1])
 
-def est_complexe(nombre):
-    """Vérifie si le nombre est un complexe valide (a+bi)."""
-    if '+' in nombre:
-        parties = nombre.split('+')
-        if len(parties) == 2:
-            a, bi = parties
+def est_imaginaire_pur(nombre: str) -> bool:
+    """Vérifie si c'est un imaginaire pur bi."""
+    if not str(nombre).endswith("i"):
+        return False
+    partie = nombre[:-1]
+    return partie in ("", "+", "-") or est_reel(partie)
+
+
+def est_complexe(nombre: str) -> bool:
+    """Vérifie si c'est un complexe a+bi."""
+    if "+" in nombre:
+        try:
+            a, bi = nombre.split("+", 1)
             return est_reel(a) and est_imaginaire_pur(bi)
+        except ValueError:
+            return False
     return est_reel(nombre) or est_imaginaire_pur(nombre)
 
-def get_ensemble_definitions():
-    """Retourne les définitions pédagogiques de chaque ensemble"""
-    return {
-        'chiffre_arabe': {
-            'definition': "A = {'0', ..., '9'}",
-            'description': "Un seul caractère représentant un chiffre arabe de 0 à 9"
-        },
-        'nombre_arabe': {
-            'definition': "B = {n ∈ chaînes | len(n) ≥ 2, ∀c ∈ n : c ∈ A, n[0] ≠ '0'}",
-            'description': "Nombre composé de chiffres sans commencer par zéro (≥ 2 chiffres)"
-        },
-        'entier_naturel': {
-            'definition': "ℕ = {0} ∪ B",
-            'description': "0 ou un nombre arabe valide (entier positif)"
-        },
-        'entier_naturel_negatif': {
-            'definition': "ℕ⁻ = {-n | n ∈ B}",
-            'description': "Entier négatif dont la valeur absolue est un nombre arabe valide"
-        },
-        'entier_relatif': {
-            'definition': "ℤ = ℕ ∪ ℕ⁻",
-            'description': "Entier positif, nul ou négatif"
-        },
-        'decimal_fini': {
-            'definition': "𝔻 = {p.a₁a₂...aₙ | p ∈ ℤ, aᵢ ∈ A, n ≥ 1}",
-            'description': "Nombre avec partie décimale finie non nulle"
-        },
-        'fraction_rationnelle': {
-            'definition': "F = {p/q | p ∈ ℤ, q ∈ ℕ*, q ≠ 10ⁿ}",
-            'description': "Fraction dont le dénominateur n'est pas une puissance de 10"
-        },
-        'nombre_rationnel': {
-            'definition': "ℚ = {p/q | p ∈ ℤ, q ∈ ℕ*}",
-            'description': "Nombre pouvant s'exprimer comme fraction d'entiers"
-        },
-        'irrationnel_connu': {
-            'definition': "irℚ = {π, e, √2, ...}",
-            'description': "Nombre irrationnel célèbre ne pouvant s'exprimer comme fraction exacte"
-        },
-        'reel': {
-            'definition': "ℝ = ℚ ∪ irℚ",
-            'description': "Tous les nombres rationnels et irrationnels"
-        },
-        'imaginaire_pur': {
-            'definition': "iℝ = {bi | b ∈ ℝ, i² = -1}",
-            'description': "Nombre complexe sans partie réelle"
-        },
-        'complexe': {
-            'definition': "ℂ = {a + bi | a,b ∈ ℝ}",
-            'description': "Nombre avec partie réelle et imaginaire"
-        }
-    }
 
-def nettoyer_expression(expression):
-    """Nettoie une expression mathématique en gérant les espaces"""
-    # Remplacer les caractères spéciaux de l'URL
-    expression = expression.replace('%2B', '+')  # Plus
-    expression = expression.replace('%2D', '-')  # Moins
-    expression = expression.replace('%2A', '*')  # Multiplication
-    expression = expression.replace('%2F', '/')  # Division
-    
-    # Supprimer tous les espaces
-    expression = expression.replace(' ', '')
-    
-    # Ajouter des espaces autour des opérateurs explicites
-    for op in ['+', '-', '*', '/']:
-        expression = expression.replace(op, f' {op} ')
-    
-    # Gérer la multiplication implicite (ex: 2x, sin(x)cos(x))
-    # Ajouter * entre un nombre et une fonction ou entre deux fonctions
-    expression = re.sub(r'(\d)([a-z])', r'\1 * \2', expression)  # 2x -> 2 * x
-    expression = re.sub(r'\)([a-z])', r') * \1', expression)      # sin(x)cos(x) -> sin(x) * cos(x)
-    
-    # Nettoyer les espaces multiples
-    expression = ' '.join(expression.split())
-    return expression
+# =============================
+#   Définitions (DESCRIPTIONS)
+# =============================
 
-def detecter_expression(expression):
-    """Détecte le type d'expression mathématique"""
-    expression = expression.lower().strip()
-    expression = nettoyer_expression(expression)
-    
-    # Vérifier d'abord les opérations de priorité basse (+, -)
-    for op in ['+', '-']:
-        if f' {op} ' in expression:
-            parts = expression.split(f' {op} ')
-            if len(parts) == 2:
-                return {
-                    'type': 'operation',
-                    'operateur': op,
-                    'operande1': parts[0].strip(),
-                    'operande2': parts[1].strip()
-                }
-    
-    # Puis les opérations de priorité haute (*, /)
-    for op in ['*', '/']:
-        if f' {op} ' in expression:
-            parts = expression.split(f' {op} ')
-            if len(parts) == 2:
-                return {
-                    'type': 'operation',
-                    'operateur': op,
-                    'operande1': parts[0].strip(),
-                    'operande2': parts[1].strip()
-                }
-    
+def get_ensemble_definitions(lang: str = "fr"):
+    """Retourne un sous-dictionnaire des ensembles avec fallback sur l'anglais si manquant."""
+    current = DESCRIPTIONS.get(lang, get_descriptions("en"))
+    fallback = get_descriptions("en")
+
+    keys = [
+        "chiffre_arabe",
+        "entier_naturel",
+        "entier_positif",
+        "entier_negatif",
+        "entier_relatif",
+        "nombre_decimal",
+        "rationnel",
+        "irrationnel",
+        "reel",
+        "complexe",
+    ]
+
+    ensembles = {}
+    for key in keys:
+        ensembles[key] = current.get(key, fallback.get(key, {}))
+    return ensembles
+
+
+# =============================
+#   Nettoyage & Détection
+# =============================
+
+def nettoyer_expression(expression: str) -> str:
+    """Nettoie et normalise une expression mathématique."""
+    # Décodage URL
+    expression = (
+        expression.replace("%2B", "+")
+        .replace("%2D", "-")
+        .replace("%2A", "*")
+        .replace("%2F", "/")
+        .replace(" ", "")
+    )
+
+    # Espaces autour des opérateurs
+    for op in ["+", "-", "*", "/"]:
+        expression = expression.replace(op, f" {op} ")
+
+    # Multiplication implicite
+    expression = re.sub(r"(\d)([a-z])", r"\1 * \2", expression)   # 2x -> 2 * x
+    expression = re.sub(r"\)([a-z])", r") * \1", expression)      # cos(x)sin(x)
+    expression = re.sub(r"(\d)\(", r"\1 * (", expression)         # 2(x+1)
+
+    return " ".join(expression.split())
+
+
+def detecter_expression(expression: str) -> dict:
+    """Détecte le type d'expression mathématique."""
+    expression = nettoyer_expression(expression.lower().strip())
+
+    # Addition / Soustraction
+    for op in ["+", "-"]:
+        if f" {op} " in expression:
+            a, b = expression.split(f" {op} ", 1)
+            return {"type": "operation", "operateur": op, "operande1": a, "operande2": b}
+
+    # Multiplication / Division
+    for op in ["*", "/"]:
+        if f" {op} " in expression:
+            a, b = expression.split(f" {op} ", 1)
+            return {"type": "operation", "operateur": op, "operande1": a, "operande2": b}
+
     # Constantes
-    if expression in ['pi', 'e']:
-        return {'type': 'constante', 'valeur': expression}
-    
-    # Fonctions trigonométriques
-    trig_pattern = r'^(sin|cos|tan)\(([^)]+)\)$'
-    trig_match = re.match(trig_pattern, expression)
-    if trig_match:
-        return {
-            'type': 'trig',
-            'fonction': trig_match.group(1),
-            'argument': trig_match.group(2)
-        }
-    
-    # Racine carrée
-    sqrt_pattern = r'^sqrt\(([^)]+)\)$'
-    sqrt_match = re.match(sqrt_pattern, expression)
-    if sqrt_match:
-        return {
-            'type': 'sqrt',
-            'argument': sqrt_match.group(1)
-        }
-    
-    # Logarithmes
-    log_pattern = r'^log(?:b)?\(([^;]+);([^)]+)\)$'
-    log_match = re.match(log_pattern, expression)
-    if log_match:
-        return {
-            'type': 'log',
-            'base': log_match.group(1),
-            'argument': log_match.group(2)
-        }
-    
-    # Puissance
-    power_pattern = r'^(.+)\^(.+)$'
-    power_match = re.match(power_pattern, expression)
-    if power_match:
-        return {
-            'type': 'power',
-            'base': power_match.group(1),
-            'exposant': power_match.group(2)
-        }
-    
-    # Fraction
-    fraction_pattern = r'^(.+)/(.+)$'
-    fraction_match = re.match(fraction_pattern, expression)
-    if fraction_match:
-        return {
-            'type': 'fraction',
-            'numerateur': fraction_match.group(1),
-            'denominateur': fraction_match.group(2)
-        }
-    
-    return {'type': 'nombre', 'valeur': expression}
+    if expression in ["pi", "e"]:
+        return {"type": "constante", "valeur": expression}
 
-def nettoyer_resultat(nombre):
-    """Nettoie un nombre en enlevant la partie décimale si elle est nulle"""
+    # Trigonométrie
+    if re.match(r"^(sin|cos|tan)\(([^)]+)\)$", expression):
+        f, arg = re.findall(r"^(sin|cos|tan)\(([^)]+)\)$", expression)[0]
+        return {"type": "trig", "fonction": f, "argument": arg}
+
+    # Racine
+    if re.match(r"^sqrt\(([^)]+)\)$", expression):
+        return {"type": "sqrt", "argument": re.findall(r"^sqrt\(([^)]+)\)$", expression)[0]}
+
+    # Logarithme base arbitraire : logb(a;b)
+    if re.match(r"^logb\(([^;]+);([^)]+)\)$", expression):
+        base, arg = re.findall(r"^logb\(([^;]+);([^)]+)\)$", expression)[0]
+        return {"type": "log", "base": base, "argument": arg}
+
+    # Puissance
+    if "^" in expression:
+        base, exp = expression.split("^", 1)
+        return {"type": "power", "base": base, "exposant": exp}
+
+    # Fraction
+    if "/" in expression:
+        num, den = expression.split("/", 1)
+        return {"type": "fraction", "numerateur": num, "denominateur": den}
+
+    return {"type": "nombre", "valeur": expression}
+
+
+# =============================
+#   Calculs
+# =============================
+
+def nettoyer_resultat(nombre) -> str:
+    """Retourne un nombre sans .0 inutile."""
     try:
-        # Convertir en float puis en string
-        nombre_float = float(nombre)
-        # Si c'est un entier (partie décimale = 0)
-        if nombre_float.is_integer():
-            return str(int(nombre_float))
-        return str(nombre_float)
-    except:
+        nombre_f = float(nombre)
+        return str(int(nombre_f)) if nombre_f.is_integer() else str(nombre_f)
+    except Exception:
         return str(nombre)
 
-def calculer_expression(expression):
-    """Calcule la valeur d'une expression mathématique"""
+
+def calculer_expression(expression: str) -> str:
+    """Calcule la valeur d'une expression mathématique simple."""
     try:
-        expr_info = detecter_expression(expression)
-        
-        if expr_info['type'] == 'operation':
-            op1 = float(calculer_expression(expr_info['operande1']))
-            op2 = float(calculer_expression(expr_info['operande2']))
-            
-            if expr_info['operateur'] == '+':
+        expr = detecter_expression(expression)
+
+        if expr["type"] == "operation":
+            op1 = float(calculer_expression(expr["operande1"]))
+            op2 = float(calculer_expression(expr["operande2"]))
+            if expr["operateur"] == "+":
                 return nettoyer_resultat(op1 + op2)
-            elif expr_info['operateur'] == '-':
+            if expr["operateur"] == "-":
                 return nettoyer_resultat(op1 - op2)
-            elif expr_info['operateur'] == '*':
+            if expr["operateur"] == "*":
                 return nettoyer_resultat(op1 * op2)
-            elif expr_info['operateur'] == '/':
+            if expr["operateur"] == "/":
                 if op2 == 0:
-                    raise ValueError("Division par zéro")
+                    raise ZeroDivisionError("Division par zéro")
                 return nettoyer_resultat(op1 / op2)
-        
-        elif expr_info['type'] == 'constante':
-            if expr_info['valeur'] == 'pi':
-                return nettoyer_resultat(math.pi)
-            elif expr_info['valeur'] == 'e':
-                return nettoyer_resultat(math.e)
-        
-        elif expr_info['type'] == 'trig':
-            angle = float(calculer_expression(expr_info['argument']))
-            if expr_info['fonction'] == 'sin':
-                return nettoyer_resultat(math.sin(math.radians(angle)))
-            elif expr_info['fonction'] == 'cos':
-                return nettoyer_resultat(math.cos(math.radians(angle)))
-            elif expr_info['fonction'] == 'tan':
-                return nettoyer_resultat(math.tan(math.radians(angle)))
-        
-        elif expr_info['type'] == 'sqrt':
-            return nettoyer_resultat(math.sqrt(float(calculer_expression(expr_info['argument']))))
-        
-        elif expr_info['type'] == 'log':
-            if 'base' in expr_info:
-                # logb(base;x)
-                base = float(calculer_expression(expr_info['base']))
-                x = float(calculer_expression(expr_info['argument']))
-                return nettoyer_resultat(math.log(x, base))
-            else:
-                # ln(x)
-                return nettoyer_resultat(math.log(float(calculer_expression(expr_info['argument']))))
-        
-        elif expr_info['type'] == 'power':
-            base = float(calculer_expression(expr_info['base']))
-            exp = float(calculer_expression(expr_info['exposant']))
+
+        elif expr["type"] == "constante":
+            return nettoyer_resultat(math.pi if expr["valeur"] == "pi" else math.e)
+
+        elif expr["type"] == "trig":
+            # Les descriptions indiquent que l'argument est en radians
+            angle = float(calculer_expression(expr["argument"]))
+            if expr["fonction"] == "sin":
+                return nettoyer_resultat(math.sin(angle))
+            if expr["fonction"] == "cos":
+                return nettoyer_resultat(math.cos(angle))
+            if expr["fonction"] == "tan":
+                return nettoyer_resultat(math.tan(angle))
+
+        elif expr["type"] == "sqrt":
+            return nettoyer_resultat(math.sqrt(float(calculer_expression(expr["argument"]))))
+
+        elif expr["type"] == "log":
+            base = float(calculer_expression(expr["base"]))
+            arg = float(calculer_expression(expr["argument"]))
+            return nettoyer_resultat(math.log(arg, base))
+
+        elif expr["type"] == "power":
+            base = float(calculer_expression(expr["base"]))
+            exp = float(calculer_expression(expr["exposant"]))
             return nettoyer_resultat(math.pow(base, exp))
-        
-        elif expr_info['type'] == 'fraction':
-            num = float(calculer_expression(expr_info['numerateur']))
-            den = float(calculer_expression(expr_info['denominateur']))
+
+        elif expr["type"] == "fraction":
+            num = float(calculer_expression(expr["numerateur"]))
+            den = float(calculer_expression(expr["denominateur"]))
+            if den == 0:
+                raise ZeroDivisionError("Division par zéro")
             return nettoyer_resultat(num / den)
-        
-        # Si c'est un nombre simple, le nettoyer aussi
-        return nettoyer_resultat(expression)
+
+        return nettoyer_resultat(expr["valeur"])
+
     except Exception as e:
-        raise ValueError(f"Erreur dans le calcul de l'expression: {str(e)}") 
+        raise ValueError(f"Erreur de calcul : {str(e)}")
