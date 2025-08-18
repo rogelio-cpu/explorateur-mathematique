@@ -12,16 +12,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
-from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-DEBUG = config('DEBUG', default=False, cast=bool)
-SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
-CORS_ALLOWED_ORIGINS = [origin for origin in config('CORS_ALLOWED_ORIGINS', default='').split(',') if origin]
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
+ALLOWED_HOSTS = ["explorateur-mathematique.onrender.com"]
 
 # Application definition
 
@@ -41,8 +39,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -119,7 +117,7 @@ LANGUAGES = [
 ]
 
 LOCALE_PATHS = [
-    BASE_DIR / 'api' / 'locale',
+    BASE_DIR / 'locale',
 ]
 
 # Static files (CSS, JavaScript, Images)
@@ -131,6 +129,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+CORS_ALLOWED_ORIGINS = ["https://explo-math-front.vercel.app"]
 
 # Autoriser les cookies et les en-têtes d'authentification si nécessaire
 CORS_ALLOW_CREDENTIALS = True
