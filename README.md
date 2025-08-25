@@ -26,7 +26,7 @@ cd explorateur-mathematique
 # (Optionnel) Créer un venv
 python -m venv .venv
 # Windows
-.venv\\Scripts\\activate
+.venv\Scripts\activate
 # Linux/Mac
 # source .venv/bin/activate
 
