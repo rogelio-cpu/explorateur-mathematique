@@ -1,44 +1,138 @@
-# Explorateur Numérique Mathématique
+# Explorateur Mathématique – Backend (Django REST)
 
-**Application web interactive** permettant aux utilisateurs d’explorer les propriétés mathématiques d’un nombre donné. Lorsqu’un nombre est saisi, l'application retourne ses caractéristiques : parité, primalité, représentation binaire, factorisation, racine carrée, etc.
+API Django REST pour analyser des expressions/nombres et retourner leurs propriétés mathématiques (ensembles, définitions, explications, etc.) avec support multilingue (fr/en).
 
-Ce projet adopte une approche **graphique et intuitive**, inspirée du modèle Visual Mind, via une **représentation arborescente ou en bulles** des propriétés.
+## Sommaire
+- Prérequis
+- Installation (local)
+- Variables d'environnement
+- Lancement (dev)
+- Endpoints principaux
+- Internationalisation (fr/en)
+- Exemples de requêtes
+- Déploiement (Render.com)
+- Arborescence
 
-## 🔧 Technologies
-- **Frontend** : React.js, Tailwind CSS, MathJax
-- **Backend** : Django, Django REST Framework,SQLite
-- **Outils** : Postman, GitHub, VS Code
+## Prérequis
+- Python 3.9+
+- pip
 
-## 📂 Structure du projet
-- `frontend/` : Application React
-- `backend/` : API Django
-- `docs/` : Documentation et livrables
-  
-![image](https://github.com/user-attachments/assets/5738cf13-1881-4529-bfde-09b74938c31b)
+## Installation (local)
+```bash
+# Cloner le dépôt
+git clone <repo-url>
+cd explorateur-mathematique
 
-## 👥 Répartition des équipes
+# (Optionnel) Créer un venv
+python -m venv .venv
+# Windows
+.venv\\Scripts\\activate
+# Linux/Mac
+# source .venv/bin/activate
 
-### 🔹 Backend (Django + API REST)
-- David Debuze (Team Leader)
-- Roger Epando
-- Dan Beze
+# Installer les dépendances
+pip install -r requirements.txt
 
-### 🔸 Frontend (UI avec React)
-- Elie Ntwari (Team Leader)
-- Joel Stone Lumpungu
-- Eclat-Gabriella Delomin
+# Appliquer les migrations
+python manage.py migrate
+```
 
-### 🧮 Logique & Mathématiques
-- Derick Mulambo (Team Leader)
-- Daniel Lukali
-- Joel Mukendi
-- Marie Ngoy
+## Variables d'environnement
+Créer un fichier `.env` (ou configurer vos variables dans l'environnement d'exécution) avec au minimum:
+```
+SECRET_KEY=remplacez_par_une_cle_secrete
+```
 
-### ✅ Intégration & Qualité
-- Elie Mpo
+Optionnel (prod):
+```
+ALLOWED_HOSTS=explorateur-mathematique.onrender.com
+CORS_ALLOWED_ORIGINS=https://explo-math-front.vercel.app
+```
 
-## chef de projet
-- Jelly Maweja
+## Lancement (dev)
+```bash
+python manage.py runserver
+# API racine : http://127.0.0.1:8000/
+# Endpoints API : http://127.0.0.1:8000/api/
+```
 
-## 🚀 Déploiement
-à définir
+## Endpoints principaux
+- `GET /api/analyse-nombre/?nombre=<expr>&lang=<fr|en>`
+  - Analyse une expression/nombre et retourne l'appartenance aux ensembles, les définitions et explications.
+- `GET /api/nombres/` et `POST /api/nombres/`
+  - Liste / crée des entrées `Nombre` (exemple d'entité stockée).
+
+## Internationalisation (fr/en)
+- Langue par défaut: `fr`
+- Paramètre de requête: `lang=fr` ou `lang=en`
+- Les libellés/explications proviennent de `translations/en.py` et `translations/fr.py`.
+- Les traductions Django (po/mo) sont sous `api/locale/`.
+
+## Exemples de requêtes
+```bash
+# Expression irrationnelle (pi)
+curl "http://127.0.0.1:8000/api/analyse-nombre/?nombre=pi&lang=fr"
+
+# Addition
+data="2+3"
+curl "http://127.0.0.1:8000/api/analyse-nombre/?nombre=$data&lang=en"
+```
+
+Extrait de réponse typique:
+```json
+{
+  "language": "fr",
+  "original_expression": "pi",
+  "calculated_value": "3.141592653589793",
+  "analysis": {
+    "irrationnel": {
+      "name": "Nombre irrationnel",
+      "belongs": true,
+      "definition": "ℝ \\ ℚ",
+      "description": "Réel qui n'est pas rationnel.",
+      "explanation": "pi est irrationnel"
+    }
+  }
+}
+```
+
+## Déploiement (Render.com)
+- Build Command:
+```bash
+pip install -r requirements.txt
+```
+- Start Command:
+```bash
+gunicorn enm.wsgi:application
+```
+- Variables Render à définir:
+```
+SECRET_KEY=remplacez_par_une_cle_secrete
+ALLOWED_HOSTS=explorateur-mathematique.onrender.com
+CORS_ALLOWED_ORIGINS=https://explo-math-front.vercel.app
+```
+
+## Arborescence (backend)
+```
+explorateur-mathematique/
+  api/
+    locale/
+    migrations/
+    math_engine.py
+    math_utils.py
+    models.py
+    operations.py
+    serializers.py
+    urls.py
+    utils.py
+    views.py
+  enm/
+    settings.py
+    urls.py
+    wsgi.py
+  manage.py
+  requirements.txt
+  translations/
+    en.py
+    fr.py
+```
