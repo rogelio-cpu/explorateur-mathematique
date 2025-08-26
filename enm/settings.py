@@ -129,7 +129,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-CORS_ALLOWED_ORIGINS = ["https://explo-math-front.vercel.app"]
+CORS_ALLOWED_ORIGINS = ["https://explo-math.ciremupcac.site/"]
 
 # Autoriser les cookies et les en-têtes d'authentification si nécessaire
 CORS_ALLOW_CREDENTIALS = True
